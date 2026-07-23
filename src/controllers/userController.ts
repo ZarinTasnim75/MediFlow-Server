@@ -9,14 +9,14 @@ export const registerUser = async (
   res: Response
 ) => {
   try {
-   const {
-  name,
-  email,
-  password,
-  phone,
-  gender,
-  dateOfBirth,
-} = req.body;
+    const {
+      name,
+      email,
+      password,
+      phone,
+      gender,
+      dateOfBirth,
+    } = req.body;
 
     // Empty field check
     if (!name || !email || !password) {
@@ -49,16 +49,16 @@ export const registerUser = async (
     // Password hashing
     const hashedPassword = await bcrypt.hash(password, 10);
 
-  const newUser = {
-  name,
-  email,
-  password: hashedPassword,
-  phone,
-  gender,
-  dateOfBirth,
-  role: "patient",
-  createdAt: new Date(),
-};
+    const newUser = {
+      name,
+      email,
+      password: hashedPassword,
+      phone,
+      gender,
+      dateOfBirth,
+      role: "patient",
+      createdAt: new Date(),
+    };
 
     const result = await usersCollection.insertOne(newUser);
 
@@ -80,7 +80,7 @@ export const registerUser = async (
 
 export const loginUser = async (req: Request, res: Response) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, role } = req.body;
 
     const usersCollection = db.collection("users");
 
@@ -99,6 +99,13 @@ export const loginUser = async (req: Request, res: Response) => {
       return res.status(401).json({
         success: false,
         message: "Invalid password",
+      });
+    }
+
+    if (user.role !== role) {
+      return res.status(401).json({
+        success: false,
+        message: `This account is registered as ${user.role}.`,
       });
     }
 
