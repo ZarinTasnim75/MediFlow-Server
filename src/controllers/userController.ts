@@ -3,6 +3,7 @@ import { db } from "../config/db";
 import bcrypt from "bcrypt";
 import validator from "validator";
 import { generateToken } from "../utils/generateToken";
+import { AuthRequest } from "../middleware/verifyJWT";
 
 export const registerUser = async (
   req: Request,
@@ -122,6 +123,64 @@ export const loginUser = async (req: Request, res: Response) => {
         email: user.email,
         role: user.role,
       },
+    });
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+};
+
+export const updateProfile = async (
+  req: AuthRequest,
+  res: Response
+) => {
+  try {
+    const email = req.user?.email;
+
+    const {
+      name,
+      phone,
+      gender,
+      dateOfBirth,
+      bloodGroup,
+      height,
+      weight,
+      address,
+      emergencyContactName,
+      emergencyContactNumber,
+      allergies,
+      medicalHistory,
+      image,
+    } = req.body;
+
+    await db.collection("users").updateOne(
+      { email },
+      {
+        $set: {
+          name,
+          phone,
+          gender,
+          dateOfBirth,
+          bloodGroup,
+          height,
+          weight,
+          address,
+          emergencyContactName,
+          emergencyContactNumber,
+          allergies,
+          medicalHistory,
+          image,
+        },
+      }
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Profile updated successfully",
     });
   } catch (error) {
     console.log(error);
