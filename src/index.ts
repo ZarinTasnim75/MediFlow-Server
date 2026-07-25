@@ -3,6 +3,8 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { connectDB } from "./config/db";
 import userRoutes from "./routes/userRoutes";
+import appointmentRoutes from "./routes/appointmentRoutes";
+import doctorRoutes from "./routes/doctorRoutes";
 
 dotenv.config();
 
@@ -17,6 +19,10 @@ app.use(express.json());
 app.get("/", (req, res) => {
   res.send("INDEX.TS IS RUNNING");
 });
+
+app.use("/api/v1/appointments", appointmentRoutes);
+
+app.use("/api/v1/doctors", doctorRoutes);
 
 async function startServer() {
   try {
